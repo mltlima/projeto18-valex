@@ -24,7 +24,7 @@ interface Company {
 
 export async function createCard(employee: Employee, company: Company, cardType: cardRepository.TransactionTypes) {
     const { id, fullName } = employee;
-
+    //console.log(cardType)
     if(!transactionTypes.includes(cardType)) {
         throw new Error('Invalid card type');
     }

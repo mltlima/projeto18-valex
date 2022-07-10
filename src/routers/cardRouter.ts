@@ -4,9 +4,11 @@ import schemas from '../schemas/index.js';
 import * as cardController from '../controllers/cardController.js';
 import validateApiKey from '../middlewares/validateApiKeyMiddleware.js';
 import { validateSchema } from '../middlewares/schemasMiddleware.js';
+import { validateEmployee } from '../middlewares/employeeMiddleware.js';
 
 const cardRouter = Router();
-//todo: schema
-cardRouter.post("/card", validateApiKey, validateSchema(schemas.createCardSchema), cardController.createCard);
+
+cardRouter.post("/card", validateApiKey, validateSchema(schemas.createCardSchema),
+                validateEmployee, cardController.createCard);
 
 export default cardRouter;
