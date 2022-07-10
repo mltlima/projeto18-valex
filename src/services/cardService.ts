@@ -57,6 +57,29 @@ export async function createCard(employee: Employee, cardType: cardRepository.Tr
     await cardRepository.insert(cardData);
 }
 
+export async function activateCard(cardId: number, password: string, securityCode: string) {
+    const card = await cardRepository.findById(cardId);
+    isValid(card, 'Card not found');
+
+    if(card.password) {
+        throw new Error('Card already activated');
+    }
+
+    if (dayjs(card.expirationDate).diff() > 0) {
+        throw new Error('Card expired');
+    }
+
+    const decryptedCVC = cryptr.decrypt(card.securityCode);
+    if(decryptedCVC !== securityCode) {
+        throw new Error('Invalid security code');
+    }
+
+    const encryptedPassword = cryptr.encrypt(password);
+    await cardRepository.update(cardId, { password: encryptedPassword });
+
+    await cardRepository.update(cardId, { isBlocked: false });
+}
+
 function generateCardName(name: string) {
     const nameArray = name.toUpperCase().split(' ');
     const firstName = nameArray[0];

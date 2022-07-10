@@ -10,5 +10,7 @@ const cardRouter = Router();
 
 cardRouter.post("/card", validateApiKey, validateSchema(schemas.createCardSchema),
                 validateEmployee, cardController.createCard);
+cardRouter.post("/card/activate", validateSchema(schemas.activateCardSchema),
+                cardController.activateCard);
 
 export default cardRouter;
