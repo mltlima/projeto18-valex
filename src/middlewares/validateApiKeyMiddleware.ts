@@ -4,7 +4,7 @@ import { isValid } from '../utils/validate.js';
 
 export default async function validateApiKey(req: Request, res: Response, next: NextFunction) {
     const apiKey = req.headers['x-api-key'] as string;
-    console.log(apiKey);
+    //console.log(apiKey);
     isValid(apiKey, 'Invalid api key');
 
     const company = await companiesService.getCompany(apiKey);

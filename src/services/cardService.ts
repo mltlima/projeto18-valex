@@ -22,15 +22,17 @@ interface Company {
     apiKey: string;
 }
 
-export async function createCard(employee: Employee, company: Company, cardType: cardRepository.TransactionTypes) {
+export async function createCard(employee: Employee, cardType: cardRepository.TransactionTypes) {
     const { id, fullName } = employee;
-    //console.log(cardType)
+    
     if(!transactionTypes.includes(cardType)) {
         throw new Error('Invalid card type');
     }
 
     const checkCard = await cardRepository.findByTypeAndEmployeeId(cardType, id);
-    isValid(checkCard, 'Card already exists');
+    if(checkCard) {
+        throw new Error('Card already exists');
+    }
 
     //get card info
     const cardSecurityCode = faker.finance.creditCardCVV();
@@ -48,11 +50,11 @@ export async function createCard(employee: Employee, company: Company, cardType:
         securityCode: encryptedCVC,
         expirationDate,
         isVirtual: false,
-        isBlocked: false,
+        isBlocked: true,
         type: cardType
     }
 
-    const response = await cardRepository.insert(cardData);
+    await cardRepository.insert(cardData);
 }
 
 function generateCardName(name: string) {
