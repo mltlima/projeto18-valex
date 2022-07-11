@@ -80,6 +80,20 @@ export async function activateCard(cardId: number, password: string, securityCod
     await cardRepository.update(cardId, { isBlocked: false });
 }
 
+export async function getCard(cardId: number, password: string) {
+    const card = await cardRepository.findById(cardId);
+    isValid(card, 'Card not found');
+
+    const decryptedPassword = cryptr.decrypt(card.password);
+    isValid(decryptedPassword, 'card is not active');
+    
+    if(decryptedPassword !== password.toString()) {
+        throw new Error('Invalid password');
+    }
+
+    return card;
+}
+
 function generateCardName(name: string) {
     const nameArray = name.toUpperCase().split(' ');
     const firstName = nameArray[0];

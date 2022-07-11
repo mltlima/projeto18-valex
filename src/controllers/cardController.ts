@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
+import Cryptr from 'cryptr';
 
 import * as cardService from '../services/cardService.js';
+
+const cryptr = new Cryptr(process.env.SECRET_KEY!);
 
 export async function createCard(req: Request, res: Response) {
     const { cardType } = req.body;
@@ -20,4 +23,15 @@ export async function activateCard(req: Request, res: Response) {
     await cardService.activateCard(cardId, password, securityCode);
 
     res.sendStatus(200);
+}
+
+export async function getCard(req: Request, res: Response) {
+    //const { cardId } = req.params;
+    const { cardId, password } = req.body;
+
+    const card = await cardService.getCard(Number(cardId), password);
+    ['id', 'employeeId', 'password', 'isVirtual', 'originalCardId', 'isBlocked', 'type'].forEach(prop => delete card[prop])
+    card.securityCode = cryptr.decrypt(card.securityCode);
+    
+    res.status(200).send(card);
 }

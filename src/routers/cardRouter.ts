@@ -12,5 +12,6 @@ cardRouter.post("/card", validateApiKey, validateSchema(schemas.createCardSchema
                 validateEmployee, cardController.createCard);
 cardRouter.post("/card/activate", validateSchema(schemas.activateCardSchema),
                 cardController.activateCard);
+cardRouter.post("/card/cardInfo", validateSchema(schemas.getCardSchema), cardController.getCard);
 
 export default cardRouter;

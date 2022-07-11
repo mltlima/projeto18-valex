@@ -11,9 +11,15 @@ const activateCardSchema = Joi.object({
     securityCode: Joi.number().integer().required(),
 });
 
+const getCardSchema = Joi.object({
+    cardId: Joi.string().required(),
+    password: Joi.number().integer().required(),
+});
+
 const schemas = {
     createCardSchema,
     activateCardSchema,
+    getCardSchema,
 }
 
 export default schemas;
