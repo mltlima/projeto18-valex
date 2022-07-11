@@ -3,6 +3,8 @@ import Cryptr from 'cryptr';
 import dayjs from 'dayjs';
 
 import * as cardRepository from '../repositories/cardRepository.js';
+import * as paymentRepository from '../repositories/paymentRepository.js';
+import * as rechageRepository from '../repositories/rechargeRepository.js';
 import { isValid } from '../utils/validate.js';
 
 const transactionTypes = ["groceries", "restaurant", "transport", "education", "health",];
@@ -92,6 +94,35 @@ export async function getCard(cardId: number, password: string) {
     }
 
     return card;
+}
+
+export async function getCardBalance(cardId: number) {
+    let transactionTotal = 0;
+    let rechargeTotal = 0;
+
+    const transactions = await getCardTransactions(cardId);
+    const recharges = await getCardRecharges(cardId);
+
+    transactions.map((transaction) => (transactionTotal += transaction.amount));
+    recharges.map((recharge) => (rechargeTotal += recharge.amount));
+    return {
+        "balance": rechargeTotal - transactionTotal,
+        "transactions": transactions,
+        'recharges': recharges
+    }
+
+}
+
+async function getCardTransactions(cardId: number) {
+    const transactions = await paymentRepository.findByCardId(cardId);
+
+    return transactions;
+}
+
+async function getCardRecharges(cardId: number) {
+    const recharges = await rechageRepository.findByCardId(cardId);
+
+    return recharges;
 }
 
 function generateCardName(name: string) {

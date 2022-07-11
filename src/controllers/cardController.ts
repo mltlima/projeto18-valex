@@ -25,6 +25,13 @@ export async function activateCard(req: Request, res: Response) {
     res.sendStatus(200);
 }
 
+export async function balanceCard(req: Request, res: Response) {
+    const { cardId } = req.params;
+    const card = await cardService.getCardBalance(Number(cardId));
+    //console.log(card);
+    res.status(200).send(card);
+}
+
 export async function getCard(req: Request, res: Response) {
     //const { cardId } = req.params;
     const { cardId, password } = req.body;
@@ -32,6 +39,6 @@ export async function getCard(req: Request, res: Response) {
     const card = await cardService.getCard(Number(cardId), password);
     ['id', 'employeeId', 'password', 'isVirtual', 'originalCardId', 'isBlocked', 'type'].forEach(prop => delete card[prop])
     card.securityCode = cryptr.decrypt(card.securityCode);
-    
+
     res.status(200).send(card);
 }
