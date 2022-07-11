@@ -7,8 +7,8 @@ const createCardSchema = Joi.object({
 
 const activateCardSchema = Joi.object({
     cardId: Joi.string().required(),
-    password: Joi.number().integer().greater(3).less(5).required(),
-    securityCode: Joi.string().required(),
+    password: Joi.number().integer().required(),
+    securityCode: Joi.number().integer().required(),
 });
 
 const schemas = {

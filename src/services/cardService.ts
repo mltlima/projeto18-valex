@@ -57,7 +57,7 @@ export async function createCard(employee: Employee, cardType: cardRepository.Tr
     await cardRepository.insert(cardData);
 }
 
-export async function activateCard(cardId: number, password: string, securityCode: string) {
+export async function activateCard(cardId: number, password: string, securityCode: number) {
     const card = await cardRepository.findById(cardId);
     isValid(card, 'Card not found');
 
@@ -70,7 +70,7 @@ export async function activateCard(cardId: number, password: string, securityCod
     }
 
     const decryptedCVC = cryptr.decrypt(card.securityCode);
-    if(decryptedCVC !== securityCode) {
+    if(Number(decryptedCVC) !== securityCode) {
         throw new Error('Invalid security code');
     }
 

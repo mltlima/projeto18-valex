@@ -12,6 +12,10 @@ export async function createCard(req: Request, res: Response) {
 
 export async function activateCard(req: Request, res: Response) {
     const { password, securityCode, cardId } = req.body;
+    
+    if (password.toString().length != 4) {
+        throw new Error('password must have 4 digits');
+    }
 
     await cardService.activateCard(cardId, password, securityCode);
 
