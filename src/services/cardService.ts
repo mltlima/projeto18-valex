@@ -113,6 +113,26 @@ export async function getCardBalance(cardId: number) {
 }
 
 export async function blockCard(cardId: number, password: string) {
+    const card = await checkCard(cardId, password);
+    
+    if(card.isBlocked) {
+        throw new Error('Card already blocked');
+    }
+
+    await cardRepository.update(cardId, { isBlocked: true });
+}
+
+export async function unblockCard(cardId: number, password: string) {
+    const card = await checkCard(cardId, password);
+
+    if(!card.isBlocked) {
+        throw new Error('Card already unblocked');
+    }
+
+    await cardRepository.update(cardId, { isBlocked: false });
+}
+
+async function checkCard(cardId: number, password: string) {
     const card = await cardRepository.findById(cardId);
     isValid(card, 'Card not found');
     
@@ -124,12 +144,8 @@ export async function blockCard(cardId: number, password: string) {
     if(dayjs(card.expirationDate).diff() > 0) { 
         throw new Error('Card expired');
     }
-    
-    if(card.isBlocked) {
-        throw new Error('Card already blocked');
-    }
 
-    await cardRepository.update(cardId, { isBlocked: true });
+    return card;
 }
 
 async function getCardTransactions(cardId: number) {
