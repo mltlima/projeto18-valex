@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import * as cardRepository from '../repositories/cardRepository.js';
 import * as paymentRepository from '../repositories/paymentRepository.js';
 import * as rechageRepository from '../repositories/rechargeRepository.js';
+import * as businessRepository from '../repositories/businessRepository.js';
 import { isValid } from '../utils/validate.js';
 
 const transactionTypes = ["groceries", "restaurant", "transport", "education", "health",];
@@ -180,6 +181,34 @@ async function getCardRecharges(cardId: number) {
     const recharges = await rechageRepository.findByCardId(cardId);
 
     return recharges;
+}
+
+export async function payment(cardId: number, amount: number, businessId: number, password: string) {
+    const business = await businessRepository.findById(businessId);
+    isValid(business, 'Business not found');
+
+    const card = await cardRepository.findById(cardId);
+    isValid(card, 'Card not found');
+
+    if(card.type !== business.type) {
+        throw new Error('Invalid card type');
+    }
+
+    checkCard(cardId, password);
+    
+    const balance = await getCardBalance(cardId);
+
+    if (balance.balance < amount) {
+        throw new Error('Insufficient funds');
+    }
+    
+    const paymentData = {
+        cardId,
+        amount,
+        businessId
+    }
+    await paymentRepository.insert(paymentData);
+
 }
 
 function generateCardName(name: string) {

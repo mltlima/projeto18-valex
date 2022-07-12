@@ -60,3 +60,9 @@ export async function getCard(req: Request, res: Response) {
 
     res.status(200).send(card);
 }
+
+export async function payment(req: Request, res: Response) {
+    const { cardId, amount, password, businessId } = req.body;
+    await cardService.payment(Number(cardId), Number(amount), Number(businessId), password);
+    res.sendStatus(200);
+}
