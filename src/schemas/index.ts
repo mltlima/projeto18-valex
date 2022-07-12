@@ -20,11 +20,17 @@ const balanceSchema = Joi.object({
     cardId: Joi.string().required(),
 });
 
+const blockCardSchema = Joi.object({
+    cardId: Joi.string().required(),
+    password: Joi.string().required(),
+});
+
 const schemas = {
     createCardSchema,
     activateCardSchema,
     getCardSchema,
     balanceSchema,
+    blockCardSchema,
 }
 
 export default schemas;

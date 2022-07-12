@@ -110,7 +110,26 @@ export async function getCardBalance(cardId: number) {
         "transactions": transactions,
         'recharges': recharges
     }
+}
 
+export async function blockCard(cardId: number, password: string) {
+    const card = await cardRepository.findById(cardId);
+    isValid(card, 'Card not found');
+    
+    const decryptedPassword = cryptr.decrypt(card.password);
+    if(decryptedPassword !== password.toString()) {
+        throw new Error('Invalid password');
+    }
+    
+    if(dayjs(card.expirationDate).diff() > 0) { 
+        throw new Error('Card expired');
+    }
+    
+    if(card.isBlocked) {
+        throw new Error('Card already blocked');
+    }
+
+    await cardRepository.update(cardId, { isBlocked: true });
 }
 
 async function getCardTransactions(cardId: number) {
