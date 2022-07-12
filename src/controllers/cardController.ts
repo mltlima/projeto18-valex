@@ -28,7 +28,7 @@ export async function activateCard(req: Request, res: Response) {
 export async function balanceCard(req: Request, res: Response) {
     const { cardId } = req.params;
     const card = await cardService.getCardBalance(Number(cardId));
-    //console.log(card);
+
     res.status(200).send(card);
 }
 
@@ -51,7 +51,6 @@ export async function rechargeCard(req: Request, res: Response) {
 }
 
 export async function getCard(req: Request, res: Response) {
-    //const { cardId } = req.params;
     const { cardId, password } = req.body;
 
     const card = await cardService.getCard(Number(cardId), password);

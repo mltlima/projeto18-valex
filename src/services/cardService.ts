@@ -19,12 +19,6 @@ interface Employee {
     companyId: number
 }
 
-interface Company {
-    id: number;
-    name: string;
-    apiKey: string;
-}
-
 export async function createCard(employee: Employee, cardType: cardRepository.TransactionTypes) {
     const { id, fullName } = employee;
     
@@ -155,22 +149,6 @@ export async function rechargeCard(cardId: number, amount: number) {
     await rechageRepository.insert(rechargeData);
 }
 
-async function checkCard(cardId: number, password: string) {
-    const card = await cardRepository.findById(cardId);
-    isValid(card, 'Card not found');
-    
-    const decryptedPassword = cryptr.decrypt(card.password);
-    if(decryptedPassword !== password.toString()) {
-        throw new Error('Invalid password');
-    }
-    
-    if(dayjs(card.expirationDate).diff() > 0) { 
-        throw new Error('Card expired');
-    }
-
-    return card;
-}
-
 async function getCardTransactions(cardId: number) {
     const transactions = await paymentRepository.findByCardId(cardId);
 
@@ -222,4 +200,21 @@ function generateCardName(name: string) {
     }
 
     return `${firstName} ${initials} ${lastName}`;
+}
+
+
+async function checkCard(cardId: number, password: string) {
+    const card = await cardRepository.findById(cardId);
+    isValid(card, 'Card not found');
+    
+    const decryptedPassword = cryptr.decrypt(card.password);
+    if(decryptedPassword !== password.toString()) {
+        throw new Error('Invalid password');
+    }
+    
+    if(dayjs(card.expirationDate).diff() > 0) { 
+        throw new Error('Card expired');
+    }
+
+    return card;
 }
