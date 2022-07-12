@@ -132,6 +132,28 @@ export async function unblockCard(cardId: number, password: string) {
     await cardRepository.update(cardId, { isBlocked: false });
 }
 
+export async function rechargeCard(cardId: number, amount: number) {
+    const card = await cardRepository.findById(cardId);
+    isValid(card, 'Card not found');
+    isValid(card.password, 'Card not activated');
+
+
+    if(card.isBlocked) {
+        throw new Error('Card is blocked');
+    }
+
+    if(dayjs(card.expirationDate).diff() > 0) { 
+        throw new Error('Card expired');
+    }
+
+    const rechargeData = {
+        cardId,
+        amount
+    }
+
+    await rechageRepository.insert(rechargeData);
+}
+
 async function checkCard(cardId: number, password: string) {
     const card = await cardRepository.findById(cardId);
     isValid(card, 'Card not found');

@@ -16,5 +16,7 @@ cardRouter.post("/card/cardInfo", validateSchema(schemas.getCardSchema), cardCon
 cardRouter.get("/card/balance/:cardId", cardController.balanceCard);
 cardRouter.post("/card/block", validateSchema(schemas.blockCardSchema), cardController.blockCard);
 cardRouter.post("/card/unblock", validateSchema(schemas.blockCardSchema), cardController.unblockCard);
+cardRouter.post("/card/recharge", validateApiKey, validateSchema(schemas.rechargeSchema), 
+                cardController.rechargeCard);
 
 export default cardRouter;
